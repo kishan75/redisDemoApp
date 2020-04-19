@@ -1,1 +1,1 @@
-{"gh":{"value":"hj"}}
+{"gh":{"value":"hj"},"hostelLonde":{"set":{"anmol":7,"kushan":8,"animesh":789,"pandu":100000},"tree":{"key":"pandu","priority":0.33700995889679075,"score":100000,"size":4,"left":{"key":"animesh","priority":0.10345470763902398,"score":789,"size":3,"left":{"key":"kushan","priority":0.08585798384310728,"score":8,"size":2,"left":{"key":"anmol","priority":0.010449274593545166,"score":7,"size":1,"left":null,"right":null},"right":null},"right":null},"right":null}},"jhabhai":{"value":"10","expireAt":"2020-04-19T20:04:23.819Z"}}
