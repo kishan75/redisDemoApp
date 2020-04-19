@@ -1,5 +1,4 @@
 var router = require('express').Router();
-var common = require('../common');
 
 /* GET home page. */
 router.get('/', function (req, res) {

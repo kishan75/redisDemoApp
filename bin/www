@@ -89,4 +89,5 @@ function onListening() {
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
   dbFile.loadFromJsonFile();
+  setInterval(dbFile.writeToJsonFile, process.env.PERSISTENT_INTERVAL || 3000);
 }

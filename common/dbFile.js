@@ -1,5 +1,3 @@
-var collection = {};
-
 var fs = require('fs');
 
 var path = require('path');
@@ -11,7 +9,7 @@ var isDataLoaded = false;
 
 isDataLoading = () => { return !isDataLoaded; }
 
-loadFromJsonFile = () => {
+function loadFromJsonFile() {
   fs.readFile(jsonFilePath, 'utf8', (err, chunk) => {
     if (err) throw err;
     if (chunk)
@@ -24,13 +22,12 @@ loadFromJsonFile = () => {
   // readStream.on('error', err => console.log('error found', err));
 }
 
-writeToJsonFile = () => {
-  if (isDataWriting)
+function writeToJsonFile() {
+  if (isDataWriting || !isDataLoaded)
     return;
   isDataWriting = true;
   var dataToWrite = {};
   Object.assign(dataToWrite, dbObject);
-
   fs.writeFile(jsonFilePath, Buffer.from(JSON.stringify(dataToWrite)), (err) => {
     if (err) throw err;
     isDataWriting = false;
