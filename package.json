@@ -4,7 +4,12 @@
   "private": true,
   "type": "module",
   "scripts": {
-    "start": "nodemon ./bin/www"
+    "start": "./bin/www"
+  },
+  "nodemonConfig": {
+    "ignore": [
+      "./backup/backupData.json"
+    ]
   },
   "dependencies": {
     "body-parser": "^1.19.0",

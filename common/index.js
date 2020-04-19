@@ -1,3 +1,4 @@
 module.exports = {
-  dbFile: require('./dbFile')
+  dbFile: require('./dbFile'),
+  treap: require('./treap')
 };
