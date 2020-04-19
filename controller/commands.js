@@ -3,6 +3,9 @@ let shared = require('../shared');
 var commonDbObject = common.dbFile.dbObject;
 let constants = require('../constant');
 
+/* all controller functions */
+
+/* get value of a specific key */
 let get = (req, res) => {
   let key = common.dbFile.getKey(req.params.key);
   if (key) {
@@ -14,6 +17,7 @@ let get = (req, res) => {
   res.send('nil');
 };
 
+/* set value of a specific key */
 let set = (req, res) => {
   const { key, value } = req.body;
   if ((typeof value == 'string' || typeof value == 'number') && (key != '' && value != '')) {
@@ -24,6 +28,7 @@ let set = (req, res) => {
   res.send('nil');
 };
 
+/* add or update orderd set */
 let zadd = (req, res) => {
   let { setName, key, score } = req.body;
   score = parseInt(score);
@@ -43,6 +48,7 @@ let zadd = (req, res) => {
   }
 };
 
+/* to calculate rank of a element based on score */
 let zrank = (req, res) => {
   const { setName, key } = req.params;
   let result = common.dbFile.getKey(setName);
@@ -54,6 +60,7 @@ let zrank = (req, res) => {
   res.send('nil');
 };
 
+/* to calculate all members in orderd set */
 let zcard = (req, res) => {
   const { setName } = req.params;
   let result = common.dbFile.getKey(setName);
@@ -67,6 +74,7 @@ let zcard = (req, res) => {
   res.send('nil');
 };
 
+/* to set expire time on a key */
 let expire = (req, res) => {
   const { key, time } = req.body;
   let result = common.dbFile.getKey(key);
@@ -78,6 +86,7 @@ let expire = (req, res) => {
   res.send('1');
 };
 
+/* to get time to live of a key */
 let ttl = (req, res) => {
   const { key } = req.params;
   let result = common.dbFile.getKey(key);
@@ -92,6 +101,7 @@ let ttl = (req, res) => {
   res.send('nil');
 };
 
+/* print all nodes under a range */
 let zrange = (req, res) => {
   var { score1, score2, setName } = req.params;
   score1 = parseInt(score1);

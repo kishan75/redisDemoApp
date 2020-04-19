@@ -4,6 +4,9 @@ function isBigger(key1, score1, key2, score2) {
   return false;
 }
 
+/*
+  function to generate new node for treap 
+*/
 function newNode(key, score) {
   return {
     key: key,
@@ -15,15 +18,24 @@ function newNode(key, score) {
   };
 };
 
+/*
+function to get count of all child of a node  
+*/
 function size(n) {
   return n ? n.size : 0;
 };
 
+/*
+to update child count of a node  
+*/
 function updateSize(n) {
   if (n)
     n.size = 1 + size(n.left) + size(n.right);
 };
 
+/*
+insert method of treap data structure
+*/
 function insert(key, score, data) {
   if (data) {
     if (data.key == key) {
@@ -61,6 +73,9 @@ function insert(key, score, data) {
   }
 }
 
+/*
+to calculate rank of a node in increasing order of score (1) based
+*/
 function getRank(data, key, score) {
   if (data.key == key)
     return (size(data) - size(data.right));
@@ -70,6 +85,9 @@ function getRank(data, key, score) {
     return getRank(data.left, key, score);
 }
 
+/*
+to get all nodes under the score range
+*/
 function getRange(key, score1, score2, dataArray) {
   if (!key)
     return dataArray;
@@ -82,6 +100,9 @@ function getRange(key, score1, score2, dataArray) {
   return dataArray;
 }
 
+/*
+to rotate tree from left to right
+*/
 function right_rotation(r) {
   let x = {};
   if (r) Object.assign(x, r);
@@ -102,6 +123,9 @@ function right_rotation(r) {
   return r;
 }
 
+/*
+to rotate tree from right to left
+*/
 function left_rotation(r) {
   let x = {};
   if (r) Object.assign(x, r);
@@ -122,7 +146,6 @@ function left_rotation(r) {
 
   return r;
 }
-
 
 module.exports = {
   insert,

@@ -88,6 +88,12 @@ function onListening() {
     ? 'pipe ' + addr
     : 'port ' + addr.port;
   debug('Listening on ' + bind);
+
+  /* to start loading data from JSON file */
   dbFile.loadFromJsonFile();
+
+  /* it will rewrite data after a fix interval of a time
+  interval cal be set by env , default value is 3 second
+   */
   setInterval(dbFile.writeToJsonFile, process.env.PERSISTENT_INTERVAL || 3000);
 }

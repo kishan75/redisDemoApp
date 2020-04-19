@@ -7,6 +7,7 @@ router.get('/', function (req, res) {
 
 router.use('/commands', require('./commands'));
 
+/* to handle non existent URL */
 router.get('*', (req, res) => {
   res.send("this url does'nt exist");
 });

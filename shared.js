@@ -1,6 +1,7 @@
 let common = require('./common');
 let constant = require('./constant');
 
+/* it will give data type of given key */
 function getDataType(key) {
   let result = common.dbFile.getKey(key);
   if (result['tree'])

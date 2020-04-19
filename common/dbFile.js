@@ -9,6 +9,10 @@ var isDataLoaded = false;
 
 isDataLoading = () => { return !isDataLoaded; }
 
+/* 
+  function for reading JSON file 
+  since it is JSON file so firstly we will fetch all data into buffer then parse it 
+*/
 function loadFromJsonFile() {
   fs.readFile(jsonFilePath, 'utf8', (err, chunk) => {
     if (err) throw err;
@@ -16,12 +20,12 @@ function loadFromJsonFile() {
       Object.assign(dbObject, JSON.parse(chunk));
     isDataLoaded = true;
   });
-  // const readStream = fs.createReadStream(jsonFilePath, { autoClose: true });
-  // readStream.on('data', chunk => { Object.assign(dbObject, JSON.parse(chunk.toString())) });
-  // readStream.on('end', () => isDataLoaded = true);
-  // readStream.on('error', err => console.log('error found', err));
 }
 
+/* 
+  function for writing data into file after a fix interval 
+  interval can be set from env and default value is 3 second
+*/
 function writeToJsonFile() {
   if (isDataWriting || !isDataLoaded)
     return;
@@ -32,16 +36,11 @@ function writeToJsonFile() {
     if (err) throw err;
     isDataWriting = false;
   });
-
-  // const writeStream = fs.createWriteStream(jsonFilePath, { flags: 'w' });
-  // writeStream.write(JSON.stringify(dataToWrite), err => {
-  //   if (err)
-  //     console.error(err);
-  //   isDataWriting = false;
-  // });
-  // writeStream.on('finish', () => isDataWriting = false);
 }
 
+/* 
+  this getKey function check that key is expired or not
+*/
 function getKey(key) {
   if (key in dbObject) {
     if ("expireAt" in dbObject[key] && new Date() > dbObject[key].expireAt) {

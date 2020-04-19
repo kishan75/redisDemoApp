@@ -1,7 +1,6 @@
 var router = require('express').Router();
 var controller = require('../controller');
 
-/* GET users listing. */
 router.get('/get/:key', (req, res) => {
   controller.commands.get(req, res);
 });
