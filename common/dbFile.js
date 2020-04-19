@@ -1,48 +1,68 @@
 var collection = {};
 
 var fs = require('fs');
-var Events = require('events');
-
-class EventEmitter extends Events { };
-const dbObjectEvents = new EventEmitter();
-collection.dbObjectEvents = dbObjectEvents;
 
 var path = require('path');
 var jsonFilePath = path.join(__dirname + '/../backup/backupData.json');
 
-collection.dbObject = {};
-collection.isDataWriting = false;
-isDataLoaded = false;
+var dbObject = {};
+var isDataWriting = false;
+var isDataLoaded = false;
 
-collection.isDataLoading = () => { return !isDataLoaded; }
+isDataLoading = () => { return !isDataLoaded; }
 
-collection.loadFromJsonFile = () => {
-  const readStream = fs.createReadStream(jsonFilePath, { autoClose: true });
-  readStream.on('data', chunk => { Object.assign(collection.dbObject, JSON.parse(chunk.toString())) });
-  readStream.on('end', () => collection.isDataLoaded = true);
-  readStream.on('error', err => console.log('error found', err));
-}
-
-collection.writeToJsonFile = () => {
-  if (collection.isDataWriting)
-    return;
-  collection.isDataWriting = true;
-  var dataToWrite = {};
-  Object.assign(dataToWrite, collection.dbObject);
-
-  const writeStream = fs.createWriteStream(jsonFilePath, { flags: 'w' });
-  writeStream.write(JSON.stringify(dataToWrite), err => {
-    if (err)
-      console.error(err);
-    collection.isDataWriting = false;
+loadFromJsonFile = () => {
+  fs.readFile(jsonFilePath, 'utf8', (err, chunk) => {
+    if (err) throw err;
+    if (chunk)
+      Object.assign(dbObject, JSON.parse(chunk));
+    isDataLoaded = true;
   });
-  writeStream.on('finish', () => collection.isDataWriting = false);
+  // const readStream = fs.createReadStream(jsonFilePath, { autoClose: true });
+  // readStream.on('data', chunk => { Object.assign(dbObject, JSON.parse(chunk.toString())) });
+  // readStream.on('end', () => isDataLoaded = true);
+  // readStream.on('error', err => console.log('error found', err));
 }
 
-dbObjectEvents.on('remove', function (key) {
-  console.log('removed----------')
-  if (collection.dbObject[key])
-    delete collection.dbObject[key];
-});
+writeToJsonFile = () => {
+  if (isDataWriting)
+    return;
+  isDataWriting = true;
+  var dataToWrite = {};
+  Object.assign(dataToWrite, dbObject);
 
-module.exports = collection;
+  fs.writeFile(jsonFilePath, Buffer.from(JSON.stringify(dataToWrite)), (err) => {
+    if (err) throw err;
+    isDataWriting = false;
+  });
+
+  // const writeStream = fs.createWriteStream(jsonFilePath, { flags: 'w' });
+  // writeStream.write(JSON.stringify(dataToWrite), err => {
+  //   if (err)
+  //     console.error(err);
+  //   isDataWriting = false;
+  // });
+  // writeStream.on('finish', () => isDataWriting = false);
+}
+
+function getKey(key) {
+  if (key in dbObject) {
+    if ("expireAt" in dbObject[key] && new Date() > dbObject[key].expireAt) {
+      delete dbObject[key];
+      return false;
+    }
+    return dbObject[key];
+  }
+  return false;
+}
+
+module.exports = {
+  isDataWriting,
+  writeToJsonFile,
+  isDataLoaded,
+  loadFromJsonFile,
+  isDataLoading,
+  isDataWriting,
+  getKey,
+  dbObject
+};

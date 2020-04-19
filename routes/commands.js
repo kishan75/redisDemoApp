@@ -1,35 +1,123 @@
 var router = require('express').Router();
 var common = require('../common');
+let shared = require('../shared');
+var commonDbObject = common.dbFile.dbObject;
+let constants = require('../constant');
 
 /* GET users listing. */
 router.get('/get/:key', function (req, res) {
-  res.send(req.params.key);
-  if (common.dbFile.dbObject[req.params.key])
-    res.send(common.dbFile.dbObject[req.params.key]);
-  else
-    res.send('nil');
+  let key = common.dbFile.getKey(req.params.key);
+  if (key) {
+    if (shared.getDataType(req.params.key) == constants.DATA_TYPE.string) {
+      res.send(key.value.toString());
+      return;
+    }
+  }
+  res.send('nil');
 });
 
 router.post('/set', function (req, res) {
   const { key, value } = req.body;
-  for (let i = 0; i < 3; i++) {
-    key = i.toString()
-      ;
-    value = i;
-    common.dbFile.dbObject[key] = value;
-    common.dbFile.writeToJsonFile();
+  if ((typeof value == 'string' || typeof value == 'number') && (key != '' && value != '')) {
+    commonDbObject[key] = { value };
+    res.send('OK');
+    //common.dbFile.writeToJsonFile();
+    return;
   }
-  res.send('done');
+  res.send('nil');
 });
 
 router.post('/zadd', function (req, res) {
-  const { setName, key, score } = req.body;
-  //console.log(setName, key, score);
-  for (let i = 0; i < 4; i++) {
-    common.dbFile.dbObject[setName] = common.treap.insert(i.toString(), i, common.dbFile.dbObject[setName]);
-   // console.log('every end loop', common.dbFile.dbObject[setName]);
+  let { setName, key, score } = req.body;
+  score = parseInt(score);
+  let result = common.dbFile.getKey(setName);
+  if (result) {
+    let size = commonDbObject[setName].tree.size;
+    common.treap.insert(key, score, commonDbObject[setName].tree)
+    commonDbObject[setName].set[key] = score;
+    res.send((commonDbObject[setName].tree.size - size).toString());
   }
-  res.send('done');
+  else {
+    commonDbObject[setName] = {
+      set: { [key]: score },
+      tree: common.treap.insert(key, score, commonDbObject[setName])
+    };
+    res.send(commonDbObject[setName].tree.size.toString());
+  }
+  //common.dbFile.writeToJsonFile();
+});
+
+router.get('/zrank/:setName/:key', function (req, res) {
+  const { setName, key } = req.params;
+  let result = common.dbFile.getKey(setName);
+  if (result && shared.getDataType(setName) == constants.DATA_TYPE.orderdSet && key in result['set']) {
+    let rank = common.treap.getRank(result.tree, key, result["set"][key]);
+    res.send((rank - 1).toString());
+    return;
+  }
+  res.send('nil');
+});
+
+router.get('/zcard/:setName', (req, res) => {
+  const { setName } = req.params;
+  let result = common.dbFile.getKey(setName);
+  if (result && shared.getDataType(setName) == constants.DATA_TYPE.orderdSet) {
+    if ("size" in result.tree)
+      res.send(commonDbObject[setName].tree.size.toString());
+    else
+      res.send(0);
+    return;
+  }
+  res.send('nil');
+});
+
+router.post('/expire', (req, res) => {
+  const { key, time } = req.body;
+  let result = common.dbFile.getKey(key);
+  if (!result) {
+    res.send('0');
+    return;
+  }
+  commonDbObject[key].expireAt = new Date(Date.now() + parseInt(time));
+  res.send('1');
+});
+
+router.get('/ttl/:key', (req, res) => {
+  const { key } = req.params;
+  let result = common.dbFile.getKey(key);
+  if (!result) {
+    res.send('nil');
+    return;
+  }
+  if ("expireAt" in result) {
+    res.send((result.expireAt - new Date()).toString());
+    return;
+  }
+  res.send('nil');
+});
+
+router.get('/zrange/:setName/:score1/:score2', (req, res) => {
+  var { score1, score2, setName } = req.params;
+  score1 = parseInt(score1);
+  score2 = parseInt(score2);
+  let key = common.dbFile.getKey(setName);
+  if (!key) {
+    res.send('nil');
+    return;
+  }
+  if (shared.getDataType(setName) === constants.DATA_TYPE.orderdSet) {
+    if (score1 < 0)
+      score1 = Infinity;
+    if (score2 < 0)
+      score2 = Infinity;
+    var result = [];
+    common.treap.getRange(key.tree, score1, score2, result);
+    res.send(result);
+  }
+  else {
+    res.send('nil');
+    return;
+  }
 });
 
 module.exports = router;

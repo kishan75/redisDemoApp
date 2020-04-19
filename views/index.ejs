@@ -1,1 +1,180 @@
-<h1>hello there</h1>
+<html>
+
+<head>
+  <h1>RedisDemoApp</h1>
+  <script>
+    function setData() {
+      var xhr = new XMLHttpRequest();
+      var data = JSON.stringify({
+        "key": document.getElementById('setKey').value,
+        "value": document.getElementById('setValue').value
+      });
+
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+      xhr.open("POST", "/commands/set");
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(data);
+    }
+
+    function getData() {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+      xhr.open("GET", `/commands/get/${document.getElementById("getKey").value}`);
+      xhr.send();
+    }
+
+    function zaddData() {
+      var data = JSON.stringify({
+        setName: document.getElementById("zaddSetName").value,
+        key: document.getElementById("zaddKey").value,
+        score: document.getElementById("zaddScore").value
+      });
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+      xhr.open("POST", "/commands/zadd");
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(data);
+    }
+
+    function expireData() {
+      var data = JSON.stringify({
+        key: document.getElementById('expireKey').value,
+        time: document.getElementById('expireTime').value
+      });
+      var xhr = new XMLHttpRequest();
+
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+
+      xhr.open("POST", "/commands/expire");
+      xhr.setRequestHeader("Content-Type", "application/json");
+      xhr.send(data);
+    }
+
+    function zrankData() {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+
+      xhr.open("GET", `/commands/zrank/${document.getElementById('zrankSetName').value}/${document.getElementById('zrankKey').value}`);
+      xhr.send();
+    }
+
+    function ttlData() {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+      xhr.open("GET", `/commands/ttl/${document.getElementById('ttlKey').value}`);
+      xhr.send();
+    }
+
+    function zcardData() {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          alert(this.responseText);
+        }
+      });
+      xhr.open("GET", `/commands/zcard/${document.getElementById('zcardSetName').value}`);
+      xhr.send();
+    }
+
+    function zrangeData() {
+      var xhr = new XMLHttpRequest();
+      xhr.addEventListener("readystatechange", function () {
+        if (this.readyState === 4) {
+          if (this.responseText == 'nil')
+            alert(this.responseText);
+          else {
+            var list = document.getElementById("rangeList");
+            while (list.hasChildNodes()) {
+              list.removeChild(list.firstChild);
+            }
+            JSON.parse(this.responseText).forEach(data => {
+              var li = document.createElement('li'); // Create a <p> node
+              var textnode = document.createTextNode(`key : ${data.key}   , score: ${data.score}`);
+              li.appendChild(textnode); // Append the text to <p>
+              list.appendChild(li);
+            });
+          }
+        }
+      });
+      xhr.open("GET", `http://localhost:3000/commands/zrange/${document.getElementById('zrangeSetName').value}/${document.getElementById('zrangeScore1').value}/${document.getElementById('zrangeScore2').value}`);
+      xhr.send();
+    }
+
+  </script>
+</head>
+
+<body>
+  <h4>SET</h4>
+  <label>key</label>
+  <input id="setKey" type="text">
+  <label>value</label>
+  <input id="setValue" type="text">
+  <input type="button" value="execute SET" onclick="setData()">
+  <h4>GET</h4>
+  <label>key</label>
+  <input id="getKey" type="text">
+  <input type="button" value="execute GET" onclick="getData()">
+  <h4>ZADD</h4>
+  <label>setName</label>
+  <input id="zaddSetName" type="text">
+  <label>key</label>
+  <input id="zaddKey" type="text">
+  <label>score</label>
+  <input id="zaddScore" type="number">
+  <input type="button" value="execute ZADD" onclick="zaddData()">
+  <h4>EXPIRE</h4>
+  <label>key</label>
+  <input id="expireKey" type="text">
+  <label>time</label>
+  <input id="expireTime" type="number">
+  <input type="button" value="execute EXPIRE" onclick="expireData()">
+  <h4>ZRANK</h4>
+  <label>setName</label>
+  <input id="zrankSetName" type="text">
+  <label>key</label>
+  <input id="zrankKey" type="text">
+  <input type="button" value="execute ZRANK" onclick="zrankData()">
+  <h4>TTL</h4>
+  <label>key</label>
+  <input id="ttlKey" type="text">
+  <input type="button" value="execute TTL" onclick="ttlData()">
+  <h4>ZCARD</h4>
+  <label>setName</label>
+  <input id="zcardSetName" type="text">
+  <input type="button" value="execute ZCARD" onclick="zcardData()">
+  <h4>ZRANGE</h4>
+  <label>setName</label>
+  <input id="zrangeSetName" type="text">
+  <label>startRange</label>
+  <input id="zrangeScore1" type="number">
+  <label>endRange</label>
+  <input id="zrangeScore2" type="number">
+  <input type="button" value="execute ZRANGE" onclick="zrangeData()">
+  <ul id="rangeList"></ul>
+</body>
+
+</html>

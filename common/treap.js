@@ -4,52 +4,56 @@ function isBigger(key1, score1, key2, score2) {
   return false;
 }
 
-function isexist(data) {
-  return Object.keys(data).length ? true : false;
-}
-
 function newNode(key, score) {
   return {
     key: key,
     priority: Math.random(),
     score: score,
+    size: 1,
     left: null,
     right: null
   };
 };
 
-function size(node) {
-  return node ? node.size : 0;
+function size(n) {
+  return n ? n.size : 0;
 };
 
-function updateSize(node) {
-  if (node)
-    node.size = 1 + size(node.left) + size(node.right);
+function updateSize(n) {
+  if (n)
+    n.size = 1 + size(n.left) + size(n.right);
 };
-
-function split(node, score, ) {
-
-}
 
 function insert(key, score, data) {
   if (data) {
-    if (isBigger(data.key, data.score, key, score))
-      data.left = insert(key, score, data.left);
+    if (data.key == key) {
+      data.key = key;
+      data.score = score;
+    }
     else
-      data.right = insert(key, score, data.right);
+      if (isBigger(data.key, data.score, key, score)) {
+        if (data.left)
+          insert(key, score, data.left);
+        else
+          data.left = newNode(key, score);
+      }
+      else if (isBigger(key, score, data.key, data.score)) {
+        if (data.right)
+          insert(key, score, data.right);
+        else
+          data.right = newNode(key, score);
+      }
+      else return;
+
     if (data.left && data.left.priority > data.priority) {
-      let x = {};
-      Object.assign(x, right_rotation(data));
-      data = {};
+      let x = right_rotation(data);
       Object.assign(data, x);
     }
     if (data.right && data.right.priority > data.priority) {
-      let x = {};
-      Object.assign(x, left_rotation(data));
-      data = {};
+      let x = left_rotation(data);
       Object.assign(data, x);
     }
-    console.log('after', data);
+    updateSize(data);
     return data;
   }
   else {
@@ -57,47 +61,74 @@ function insert(key, score, data) {
   }
 }
 
+function getRank(data, key, score) {
+  if (data.key == key)
+    return (size(data) - size(data.right));
+  if (data.score <= score)
+    return 1 + size(data.left) + getRank(data.right, key, score);
+  if (data.score > score)
+    return getRank(data.left, key, score);
+}
+
+function getRange(key, score1, score2, dataArray) {
+  if (!key)
+    return dataArray;
+  if (score1 < key.score)
+    getRange(key.left, score1, score2, dataArray);
+  if (score1 <= key.score && score2 >= key.score)
+    dataArray.push({ key: key.key, score: key.score });
+  if (score2 > key.score)
+    getRange(key.right, score1, score2, dataArray);
+  return dataArray;
+}
+
 function right_rotation(r) {
-  console.log('right rotation before', r);
   let x = {};
-  Object.assign(x, r);
-  x.left = {};
+  if (r) Object.assign(x, r);
+  else x = r;
+
   r = r.left;
-  Object.assign(x.left, r.right);
-  r.right = {};
-  // console.log(x, r);
-  Object.assign(r.right, x);
-  console.log('right rotation after', r);
+  if (r.right) {
+    x.left = {};
+    Object.assign(x.left, r.right);
+  }
+  else x.left = r.right;
+
+  if (x) {
+    r.right = {};
+    Object.assign(r.right, x);
+  }
+  else r.right = x;
   return r;
 }
 
 function left_rotation(r) {
-  console.log('left rotation before', r);
   let x = {};
-  Object.assign(x, r);
-  x.right = {};
-  //console.log(x,r);
+  if (r) Object.assign(x, r);
+  else x = r;
+
   r = r.right;
-  Object.assign(x.right, r.left);
-  r.left = {};
-  Object.assign(r.left, x);
-  // let r = {};
-  // Object.assign(r, root.right);
-  // let x = {};
-  // Object.assign(x, root.right.left);
-  // if (r.left == null)
-  //   r.left = {};
-  // Object.assign(r.left, root);
-  // Object.assign(root.right, x);
-  // Object.assign(root, r);
-  console.log('left rotation after', r);
-  return root;
+  if (r.left) {
+    x.right = {};
+    Object.assign(x.right, r.left);
+  }
+  else x.right = r.left;
+
+  if (x) {
+    r.left = {};
+    Object.assign(r.left, x);
+  }
+  else r.left = x;
+
+  return r;
 }
 
 
 module.exports = {
-  insert: insert,
-  newNode: newNode,
-  updateSize: updateSize
+  insert,
+  newNode,
+  updateSize,
+  getRange,
+  getRank
 };
 

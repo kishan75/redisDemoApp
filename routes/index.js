@@ -3,10 +3,13 @@ var common = require('../common');
 
 /* GET home page. */
 router.get('/', function (req, res) {
-  console.log(common.dbFile.dbObject);
-  res.send(common.dbFile.dbObject);
+  res.render('index');
 });
 
 router.use('/commands', require('./commands'));
+
+router.get('*', (req, res) => {
+  res.send("this url does'nt exist");
+});
 
 module.exports = router;
