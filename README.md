@@ -13,7 +13,7 @@ currently supported operations.
 * ZCARD
 
 # Setup
-The API requires Node.js
+The API requires Node.js v 10.18.1 and npm v 6.13.4
 
 ### To set up and running:
 
