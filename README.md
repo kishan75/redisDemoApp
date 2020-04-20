@@ -43,12 +43,6 @@ $ PERSISTENT_INTERVAL = 6000 npm start
 
 # API Description or Commands
 
-#### /allParagraph  *(POST)*
-* this is *POST API* which takes multiple paragraph in body
-* keyName:*paragraph* 
-* value:any *string*
-* perform parsing work
-
 | END-POINT | TYPE | REQUEST-BODY| REQUEST-PARAMS| RESPONSE | ON ERROR or Wrong REQUEST | DESCRIPTION
 | ------ | ------ |----|----|----|-----|------|
 |/get/:key|GET|-|key *(string)*|value of a key | nil| this is to fetch value of a key|
