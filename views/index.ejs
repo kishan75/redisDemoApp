@@ -120,7 +120,7 @@
           }
         }
       });
-      xhr.open("GET", `http://localhost:3000/commands/zrange/${document.getElementById('zrangeSetName').value}/${document.getElementById('zrangeScore1').value}/${document.getElementById('zrangeScore2').value}`);
+      xhr.open("GET", `/commands/zrange/${document.getElementById('zrangeSetName').value}/${document.getElementById('zrangeScore1').value}/${document.getElementById('zrangeScore2').value}`);
       xhr.send();
     }
 
