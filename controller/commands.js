@@ -34,7 +34,7 @@ let zadd = (req, res) => {
   score = parseInt(score);
   let result = common.dbFile.getKey(setName);
   if (result) {
-    if (shared.getDataType(result) != constants.DATA_TYPE.orderdSet) {
+    if (shared.getDataType(setName) != constants.DATA_TYPE.orderdSet) {
       res.send('nil');
       return;
     }
