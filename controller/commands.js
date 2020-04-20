@@ -34,6 +34,10 @@ let zadd = (req, res) => {
   score = parseInt(score);
   let result = common.dbFile.getKey(setName);
   if (result) {
+    if (shared.getDataType(result) != constants.DATA_TYPE.orderdSet) {
+      res.send('nil');
+      return;
+    }
     let size = commonDbObject[setName].tree.size;
     common.treap.insert(key, score, commonDbObject[setName].tree)
     commonDbObject[setName].set[key] = score;
