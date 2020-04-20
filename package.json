@@ -2,14 +2,8 @@
   "name": "redisdemoapp",
   "version": "0.0.0",
   "private": true,
-  "type": "module",
   "scripts": {
     "start": "./bin/www"
-  },
-  "nodemonConfig": {
-    "ignore": [
-      "./backup/backupData.json"
-    ]
   },
   "dependencies": {
     "body-parser": "^1.19.0",
