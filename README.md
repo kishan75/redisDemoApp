@@ -1,6 +1,5 @@
-# RedisDemoApp 
- 
-https://redisdemoapp.herokuapp.com/    
+
+# [RedisDemoApp](https://redisdemoapp.herokuapp.com/)
 
  > This is a simple application where i designed few basic  functionality of redis Database . I created apis for every operations in future we can convert this to a command line application.
 
@@ -41,7 +40,7 @@ $ PORT = 3001 npm start
 * for example you want to set 6 second
 ```sh
 $ PERSISTENT_INTERVAL = 6000 npm start
-```*
+```
 
 # API Description or Commands
 
